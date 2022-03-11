@@ -1,0 +1,45 @@
+#IMPORTING THE DATASET
+Data = read.csv(file.choose())
+View(Data)
+#VISUALISING THE DATASET
+ggplot(data= Data, aes(x=Hours, y=Scores,colour="Red" 
+                         )) + geom_point()
+
+#Splitting the dataset
+set.seed(123)
+split = sample.split(Data$Scores, SplitRatio = 0.8)
+
+training_set = subset(Data, split == TRUE)
+test_set = subset(Data, split == FALSE)
+
+#Building regression model
+regressor = lm(formula = Scores~Hours,
+               data = training_set)
+
+
+
+
+#visualising test set results
+ggplot() +
+  geom_point(aes(x = test_set$Hours, y = test_set$Scores),
+             colour = 'red') +
+  geom_line(aes(x = training_set$Hours, y = predict(regressor, newdata = training_set)),
+            colour = 'blue') +
+  ggtitle('Scores vs Hours')  +
+  xlab('Hours') +
+  ylab('Scores')
+#prediction of dataset
+
+y_pred = predict(regressor, newdata = test_set)
+
+ggPredict(regressor,se=TRUE,interactive = FALSE)
+
+#creating dataframe for individual prediction
+new<-data.frame(Hours=c(9.25))
+
+predict(regressor,newdata = new)
+
+#Evaluating the model
+
+summary(regressor)
+
